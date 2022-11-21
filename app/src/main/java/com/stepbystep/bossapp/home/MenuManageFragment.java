@@ -1,154 +1,145 @@
 package com.stepbystep.bossapp.home;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.stepbystep.bossapp.DO.Food;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.stepbystep.bossapp.DO.AdminFood;
 import com.stepbystep.bossapp.R;
 
 import java.util.ArrayList;
 
 
 public class MenuManageFragment extends Fragment {
-    private static FrameLayout menuEditLayout, menuAddLayout;
-    Button menuAddButton, refreshButton;
 
+    private View view;
     String truckId;
-    static RecyclerView menuRecyclerView;
-    static MenuAdapter menuAdapter;
-    static Context context;
 
-    DatabaseReference food_database;
-    DatabaseReference truck_database;
-    FirebaseAuth mAuth;
-    FirebaseUser user;
+    private RecyclerView MenuRecycler;
+    private MenuAdapter menuAdapter;
+    private FloatingActionButton floatingActionButton;
+    private ArrayList<AdminFood> foods;
+    private DatabaseReference databaseReference;
+    private ProgressBar bar;
 
-    ArrayList<Food> foods;
-
-    static int lastClickedMenu;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_menu_manage,container,false);
-        lastClickedMenu=-1;
+        view = inflater.inflate(R.layout.fragment_menu_manage,container,false);
 
-        context = view.getContext();
+        bar = view.findViewById(R.id.foodProgressBar);
+
+        MenuRecycler = (RecyclerView)view.findViewById(R.id.foodsRecycler);
+        floatingActionButton = (FloatingActionButton)view.findViewById(R.id.foodsFloatingBtnId);
 
         truckId = getArguments().getString("truck");
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        food_database =  FirebaseDatabase.getInstance().getReference("FoodTruck").child("Food");
-        truck_database =  FirebaseDatabase.getInstance().getReference("FoodTruck").child("Truck");
+        databaseReference = FirebaseDatabase.getInstance().getReference("FoodTruck").child("Food").child(truckId);
+        foods = new ArrayList<>();
 
-        menuEditLayout = view.findViewById(R.id.M_menuEditLayout);
-        menuAddLayout = view.findViewById(R.id.M_menuAddLayout);
-        menuAddButton = view.findViewById(R.id.menuAddButton);
-        menuAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuAddShow(true);
-            }
-        });
+        String key = databaseReference.push().getKey();
 
-        menuRecyclerView = (RecyclerView)view.findViewById(R.id.menuRecyclerView);
-        menuAdapter = new MenuAdapter(getContext());
-        menuRecyclerView.setHasFixedSize(true);
-        menuRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        menuAdapter = new MenuAdapter(getActivity(), foods);
+        MenuRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        MenuRecycler.setAdapter(menuAdapter);
 
-        refreshButton = view.findViewById(R.id.refreshButton);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reloadView();
-            }
-        });
-
-        return view;
-    }
-
-    public void getMenuDB(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("FoodTruck").child("Food").child(truckId);
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                foods.clear();
+                for(DataSnapshot snapshot1 : snapshot.getChildren()) //메뉴
+                {
+                    foods.add(new AdminFood(snapshot1.getKey(),
+                            snapshot1.child("name").getValue(String.class),
+                            snapshot1.child("content").getValue(String.class),
+                            snapshot1.child("image").getValue(String.class) ,
+                            snapshot1.child("cost").getValue(String.class)));
+                }
+                menuAdapter.notifyDataSetChanged();
+                bar.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), "에러 발생", Toast.LENGTH_LONG).show();
+                bar.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        menuAdapter.setOnItemClickListener(new MenuAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int pos) {
+                Intent i = new Intent(getActivity() , EditMenuActivity.class);
+                Bundle b = new Bundle();
+                b.putString("foodkey", foods.get(pos).getfKey());
+                b.putString("img" , foods.get(pos).getImage());
+                b.putString("name" , foods.get(pos).getName());
+                b.putString("description" , foods.get(pos).getContent());
+                b.putString("price" , foods.get(pos).getCost());
+                b.putString("truck", truckId);
+                i.putExtras(b);
+                startActivity(i);
+            }
+        });
+
+        menuAdapter.setOnLongClickListener(new MenuAdapter.onLongClickListener() {
+            @Override
+            public void onItemLongClick(int pos) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity()).setTitle("확인절차").setMessage("정말 삭제하시겠습니까?!").setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        DatabaseReference reference = databaseReference.child(foods.get(pos).getfKey());
+                        reference.removeValue();
+                        StorageReference z = FirebaseStorage.getInstance().getReference("Menu").child(foods.get(pos).getName() + ".jpg");
+                        z.delete();
+                        StorageReference x = FirebaseStorage.getInstance().getReference("Menu").child(foods.get(pos).getName());
+                        x.delete();
+                    }
+                }).setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).setIcon(android.R.drawable.ic_dialog_alert);
+                dialog.show();
+            }
+        });
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //메뉴 등록 버튼
+                startActivity(new Intent(getActivity(),AddMenuActivity.class));
 
             }
         });
+
+
+        return view;
     }
-
-    public static void menuEditShow(boolean show){
-        int duration = 200;
-
-        Animation pageUpAnim = AnimationUtils.loadAnimation(context, R.anim.page_slide_up);
-        pageUpAnim.setDuration(duration);
-        Animation pageDownAnim = AnimationUtils.loadAnimation(context, R.anim.page_slide_down);
-        pageDownAnim.setDuration(duration);
-
-        if(show) {
-            menuEditLayout.setVisibility(View.VISIBLE);
-            menuEditLayout.setAnimation(pageUpAnim);
-        }else{
-            menuEditLayout.setVisibility(View.GONE);
-            menuEditLayout.setAnimation(pageDownAnim);
-        }
-
-    }
-
-    public static void menuAddShow(boolean show){
-        int duration = 200;
-
-        Animation pageUpAnim = AnimationUtils.loadAnimation(context, R.anim.page_slide_up);
-        pageUpAnim.setDuration(duration);
-        Animation pageDownAnim = AnimationUtils.loadAnimation(context, R.anim.page_slide_down);
-        pageDownAnim.setDuration(duration);
-
-        if(show) {
-            menuAddLayout.setVisibility(View.VISIBLE);
-            menuAddLayout.setAnimation(pageUpAnim);
-        }else{
-            menuAddLayout.setVisibility(View.GONE);
-            menuAddLayout.setAnimation(pageDownAnim);
-        }
-
-    }
-
-
-    public void reloadView(){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(MenuManageFragment.this).attach(MenuManageFragment.this).commitAllowingStateLoss();
-
-    }
-
 
 }

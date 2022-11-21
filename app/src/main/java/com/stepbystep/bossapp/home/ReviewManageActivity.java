@@ -50,12 +50,12 @@ public class ReviewManageActivity extends AppCompatActivity {
 
         if(user != null){
             //유저 데이터 받아오기
-            databaseReference.child("StoreAccount").child(user.getUid()).child("truck").addValueEventListener(new ValueEventListener() {
+            databaseReference.child("StoreAccount").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if(snapshot.exists()) {
-                        Truck truck = snapshot.getValue(Truck.class);
-                        truckId = truck.getId();
+                        StoreAccount storeAccount = snapshot.getValue(StoreAccount.class);
+                        truckId = storeAccount.getTruckId();
                         bundle.putString("truck" ,truckId);
                         TruckReviewFragment truckReviewFragment = new TruckReviewFragment();
                         truckReviewFragment.setArguments(bundle);

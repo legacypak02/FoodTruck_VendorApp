@@ -30,6 +30,12 @@
             android:name=".home.EditTruckInfoActivity"
             android:exported="false" />
         <activity
+            android:name=".home.AddMenuActivity"
+            android:exported="false" />
+        <activity
+            android:name=".home.EditMenuActivity"
+            android:exported="false" />
+        <activity
             android:name=".home.TruckNoticeActivity"
             android:exported="false" />
         <activity

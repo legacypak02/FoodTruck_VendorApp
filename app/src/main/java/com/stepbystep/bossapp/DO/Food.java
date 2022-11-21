@@ -8,9 +8,6 @@ public class Food implements Serializable {
     private  String image;
     private String content;
 
-    public Food(){
-
-    }
 
     public Food(String cost, String name, String image, String content) {
         this.cost = cost;
@@ -50,4 +47,5 @@ public class Food implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
 }

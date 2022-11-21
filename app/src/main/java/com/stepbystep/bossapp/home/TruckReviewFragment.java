@@ -91,7 +91,7 @@ public class TruckReviewFragment extends Fragment {
 
     private void getRating() {
 
-        review_database.child(truckId).addValueEventListener(new ValueEventListener() {
+        review_database.orderByChild("truckId").equalTo(truckId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int sum =0;
@@ -131,7 +131,7 @@ public class TruckReviewFragment extends Fragment {
                 }
                 else {
                     ave = (float) (Math.round(ave*10)/10.0);
-                    ratingNum.setText(String.valueOf( ave));
+                    ratingNum.setText(String.valueOf(ave));
                     ratingBar.setRating(ave);
                 }
                 for (int i = 0; i<5;i++ ){
@@ -151,15 +151,15 @@ public class TruckReviewFragment extends Fragment {
 
     private void getComment() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("FoodTruck").child("Review").child(truckId);
-        myRef.addValueEventListener(new ValueEventListener() {
+        DatabaseReference myRef = database.getReference("FoodTruck").child("Review");
+        myRef.orderByChild("truckId").equalTo(truckId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot unit : snapshot.getChildren()){
                     commentList.add( unit.getValue(Review.class));
                 }
                 for (Review item: commentList) {
-                    DatabaseReference reference = database.getReference("FoodTruck").child("Review").child(truckId);
+                    DatabaseReference reference = database.getReference("FoodTruck").child("Review");
                     reference.orderByChild("idToken").equalTo(item.getUser_idToken()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {

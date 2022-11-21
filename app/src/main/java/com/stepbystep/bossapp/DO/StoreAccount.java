@@ -9,7 +9,7 @@ public class StoreAccount implements Serializable {
     private String password; // 패스워드
     private String name; // 이름
     private String phoneNumber;
-    private ArrayList<Truck> truck;
+    private String truckId;
 
     public StoreAccount() {
 
@@ -53,5 +53,13 @@ public class StoreAccount implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getTruckId() {
+        return truckId;
+    }
+
+    public void setTruckId(String truckId) {
+        this.truckId = truckId;
     }
 }

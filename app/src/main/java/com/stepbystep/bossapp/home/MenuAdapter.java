@@ -1,101 +1,129 @@
 package com.stepbystep.bossapp.home;
 
+
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.stepbystep.bossapp.DO.Food;
+
+import com.squareup.picasso.Picasso;
+import com.stepbystep.bossapp.DO.AdminFood;
+
 import com.stepbystep.bossapp.R;
 
-import java.text.DecimalFormat;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
-    ArrayList<Food> items = new ArrayList<>();
-    Context context;
-    static MenuEditFragment menuEditFragment;
 
-    public MenuAdapter(Context context) {
-        this.context = context;
+public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder> {
+
+    private List<AdminFood> foods;
+    private Context context;
+    private onItemClickListener itemListener;
+    private onLongClickListener longListener;
+
+    public interface onItemClickListener{
+        void onItemClick(int pos);
     }
+    public interface onLongClickListener{
+        void onItemLongClick(int pos);
+    }
+
+    public void setOnItemClickListener(onItemClickListener listener)
+    {
+        itemListener = listener;
+    }
+
+    public void setOnLongClickListener(onLongClickListener listener)
+    {
+        longListener = listener;
+    }
+
+    public MenuAdapter(Context context, List<AdminFood> foods) {
+        this.context = context;
+        this.foods = foods;
+    }
+
+    public void addList(List<AdminFood> list) {
+        foods.clear();
+        Collections.copy(foods, list);
+        this.notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_menu,parent,false);
-
-        menuEditFragment = new MenuEditFragment();
-        context = parent.getContext();
-
-        return new MenuAdapter.ViewHolder(view);
+    public MenuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(context).inflate(R.layout.item_menu, parent, false);
+        return new MenuViewHolder(v, itemListener, longListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Food food = items.get(position);
-        holder.setItem(food);
+    public void onBindViewHolder(@NonNull MenuViewHolder holder, int position) {
+        holder.cardView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
+        holder.img.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
+        Picasso.get().load(foods.get(position).getImage()).centerCrop().fit().into(holder.img);
+        holder.name.setText(foods.get(position).getName());
+        holder.description.setText(foods.get(position).getContent());
+        holder.cost.setText(foods.get(position).getCost()+" 원");
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return foods.size();
     }
 
+    public static class MenuViewHolder extends RecyclerView.ViewHolder{
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        ImageView imageView;
-        TextView textView1, textView2, textView3;
-        LinearLayout menuInfo;
-        Button menuEditBtn;
-
-        public ViewHolder(@NonNull View itemView) {
+        ImageView img;
+        TextView name, description, cost;
+        CardView cardView;
+        public MenuViewHolder(@NonNull View itemView , final onItemClickListener itemlistener , final onLongClickListener longClickListener) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.M_menuImg);
-            textView1 = itemView.findViewById(R.id.M_menuName);
-            textView2 = itemView.findViewById(R.id.M_menuCnt);
-            textView3 = itemView.findViewById(R.id.M_menuPrice);
-            menuInfo = itemView.findViewById(R.id.M_menuInfo);
-            menuEditBtn = itemView.findViewById(R.id.M_menuEditButton);
+            img = itemView.findViewById(R.id.adapterMenuImage);
+            name = itemView.findViewById(R.id.adapterMenuName);
+            description = itemView.findViewById(R.id.adapterMenuDescription);
+            cost = itemView.findViewById(R.id.adapterMenuPrice);
+            cardView = itemView.findViewById(R.id.MenuCardView);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(itemlistener != null)
+                    {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION)
+                        {
+                            itemlistener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if(longClickListener != null){
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION)
+                            longClickListener.onItemLongClick(position);
+                    }
+                    return false;
+                }
+            });
         }
-
-        public void setItem(Food food){
-            Glide.with(context).load(food.getImage()).into(imageView);
-            textView1.setText(food.getName());
-            textView2.setText(food.getContent());
-            textView3.setText(food.getCost()+"원");
-        }
-
-    }
-
-    public void addItem(Food food){
-        items.add(food);
-    }
-
-    public Food getItem(int position){
-        return items.get(position);
-    }
-
-    public void setItems(ArrayList<Food> items){
-        this.items = items;
-    }
-
-    public ArrayList<Food> getItems(){
-        return  items;
     }
 
 }

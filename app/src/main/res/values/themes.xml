@@ -24,16 +24,16 @@
         </item>
     </style>
 
-    <style name="Widget.Theme.BookStylist.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+    <style name="Widget.Theme.BossApp.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
     </style>
 
-    <style name="Widget.Theme.BookStylist.ButtonBar.Fullscreen" parent="">
+    <style name="Widget.Theme.BossApp.ButtonBar.Fullscreen" parent="">
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
 
-    <style name="ThemeOverlay.BookStylist.FullscreenContainer" parent="">
+    <style name="ThemeOverlay.BossApp.FullscreenContainer" parent="">
         <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
