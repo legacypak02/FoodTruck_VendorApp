@@ -6,11 +6,4 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="MD_top_margin">10dp</dimen>
     <dimen name="MD_allow_size">35dp</dimen>
-    <dimen name="size_xs">2dp</dimen>
-    <dimen name="size_s">4dp</dimen>
-    <dimen name="size_m">8dp</dimen>
-    <dimen name="size_l">16dp</dimen>
-    <dimen name="size_xl">32dp</dimen>
-    <dimen name="size_xxl">48dp</dimen>
-    <dimen name="size_xxxl">52dp</dimen>
 </resources>
