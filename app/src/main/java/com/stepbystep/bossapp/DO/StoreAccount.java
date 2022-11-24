@@ -10,6 +10,7 @@ public class StoreAccount implements Serializable {
     private String name; // 이름
     private String phoneNumber;
     private String truckId;
+    private String vendor_status;
 
     public StoreAccount() {
 
@@ -61,5 +62,13 @@ public class StoreAccount implements Serializable {
 
     public void setTruckId(String truckId) {
         this.truckId = truckId;
+    }
+
+    public String getVendor_status() {
+        return vendor_status;
+    }
+
+    public void setVendor_status(String vendor_status) {
+        this.vendor_status = vendor_status;
     }
 }

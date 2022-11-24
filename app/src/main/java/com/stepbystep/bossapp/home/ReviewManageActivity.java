@@ -59,7 +59,7 @@ public class ReviewManageActivity extends AppCompatActivity {
                         bundle.putString("truck" ,truckId);
                         TruckReviewFragment truckReviewFragment = new TruckReviewFragment();
                         truckReviewFragment.setArguments(bundle);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.reviewContainer, truckReviewFragment).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.reviewContainer, truckReviewFragment).commitAllowingStateLoss();
                     }
                 }
 

@@ -62,7 +62,7 @@ public class MenuManageActivity extends AppCompatActivity {
                         bundle.putString("truck" ,truckId);
                         MenuManageFragment menuManageFragment = new MenuManageFragment();
                         menuManageFragment.setArguments(bundle);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.FrameLayout, menuManageFragment).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.FrameLayout, menuManageFragment).commitAllowingStateLoss();
                     }
                 }
 
