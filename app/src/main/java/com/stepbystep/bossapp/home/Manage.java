@@ -1,5 +1,7 @@
 package com.stepbystep.bossapp.home;
 
+import static androidx.fragment.app.FragmentManager.TAG;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.ContactsContract;
@@ -62,10 +65,9 @@ public class Manage extends Fragment {
 
     private LocationListener mLocListener = null;
     FusedLocationProviderClient client;
-    private final int permissionRequestCode = 12345;
-    private android.location.Location loc;
     private String lat;
     private String lon;
+    int PERMISSION_ID = 100;
 
     String truckId;
     String vendor_status;
@@ -104,13 +106,15 @@ public class Manage extends Fragment {
                                 @Override
                                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                     databaseReference.child("vendor_status").setValue("1");
-                                    if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                                             ContextCompat.checkSelfPermission(getActivity(),android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                                                 Manifest.permission.ACCESS_COARSE_LOCATION},100);
                                     } else {
-                                        getCurrentLocation();
-                                        Log.d("CheckCurrentLocation", "현재 위치 값: ${lat}, ${lon}");
+                                        getLastLocation();
+                                        com.stepbystep.bossapp.DO.Location location = new com.stepbystep.bossapp.DO.Location(lat, lon);
+                                        locationRef.child(truckId).child("location").setValue(location);
+                                        Log.d("CheckCurrentLocation", "현재 위치 값: "+lat+","+ lon);
                                     }
                                 }
                             });
@@ -122,12 +126,14 @@ public class Manage extends Fragment {
                                 @Override
                                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                     databaseReference.child("vendor_status").setValue("0");
-                                    if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                    if (Build.VERSION.SDK_INT >=23 && ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                                             ContextCompat.checkSelfPermission(getActivity(),android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                                                 Manifest.permission.ACCESS_COARSE_LOCATION},100);
                                     } else {
-                                        getCurrentLocation();
+                                        getLastLocation();
+                                        com.stepbystep.bossapp.DO.Location location = new com.stepbystep.bossapp.DO.Location(lat, lon);
+                                        locationRef.child(truckId).child("location").setValue(location);
                                         Log.d("CheckCurrentLocation", "현재 위치 값: " +lat+","+ lon);
                                     }
                                 }
@@ -144,18 +150,6 @@ public class Manage extends Fragment {
         }
 
         return view;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 100 && (grantResults.length > 0) &&
-                (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED)){
-            getCurrentLocation();
-        }else {
-            Toast.makeText(getActivity(), "위치정보 사용여부 거부됨", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void initButtonClickListener() {
@@ -186,42 +180,97 @@ public class Manage extends Fragment {
     }
 
     @SuppressLint("MissingPermission")
-    private void getCurrentLocation() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+    private void getLastLocation() {
 
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    Location location = task.getResult();
-                    if (location != null) {
-                        lat = Double.toString(location.getLatitude());
-                        lon = Double.toString(location.getLongitude());
-                    }else {
-                        LocationRequest locationRequest = LocationRequest.create();
-                        locationRequest.setFastestInterval(1000)
-                                .setInterval(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                                .setFastestInterval(500);
-                        LocationCallback locationCallback = new LocationCallback() {
-                            @Override
-                            public void onLocationResult(@NonNull LocationResult locationResult) {
-                                super.onLocationResult(locationResult);
-                                Location location1 = locationResult.getLastLocation();
-                                lat = Double.toString(location1.getLatitude());
-                                lon = Double.toString(location1.getLongitude());
-                            }
-                        };
-                        client.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+        if (checkPermissions()) {
+
+
+            if (isLocationEnabled()) {
+
+                client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @SuppressLint("RestrictedApi")
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        Location location = task.getResult();
+                        if (location == null) {
+                            requestNewLocationData();
+                        }
+                        else
+                        {
+                            lat = Double.toString(location.getLatitude());
+                            lon = Double.toString(location.getLongitude());
+                        }
                     }
-                }
-            });
-        }else {
-            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                });
+            } else {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        } else {
+            requestPermissions();
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private void requestNewLocationData() {
+
+        LocationRequest mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        client = LocationServices.getFusedLocationProviderClient(getActivity());
+        client.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+    }
+
+    private LocationCallback mLocationCallback = new LocationCallback() {
+
+        @SuppressLint("RestrictedApi")
+        @Override
+        public void onLocationResult(LocationResult locationResult)
+        {
+            Location mLastLocation = locationResult.getLastLocation();
+            Log.d(TAG, "Location: " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
+        }
+    };
+
+    private boolean checkPermissions() {
+        return ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(getActivity(), new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ID);
+    }
+
+
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    @Override
+    public void
+    onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastLocation();
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (checkPermissions()) {
+            getLastLocation();
+        }
+    }
 
     @Override
     public void onDestroyView() {

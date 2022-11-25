@@ -41,7 +41,7 @@ import com.stepbystep.bossapp.DO.StoreAccount;
 import com.stepbystep.bossapp.R;
 
 public class AddMenuActivity extends AppCompatActivity {
-    private TextInputEditText name, description, cost, content;
+    private TextInputEditText name, description, cost;
     private Button add , choose;
     private ImageView img;
     private Uri imgUri;
