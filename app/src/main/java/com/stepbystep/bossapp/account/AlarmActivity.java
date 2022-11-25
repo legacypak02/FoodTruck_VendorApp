@@ -86,15 +86,25 @@ public class AlarmActivity extends AppCompatActivity {
 
         //Receiver 설정
         Intent intent = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            //알람 설정
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, this.calendar.getTimeInMillis(), pendingIntent);
 
-        //알람 설정
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, this.calendar.getTimeInMillis(), pendingIntent);
+            //알람 시간 성공적으로 등록 후 Toast 보여주기 (알람시간 표시)
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd:mm:ss", Locale.getDefault());
+            Toast.makeText(this, "Alarm: " + format.format(calendar.getTime()), Toast.LENGTH_LONG).show();
+        }else {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            //알람 설정
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, this.calendar.getTimeInMillis(), pendingIntent);
 
-        //알람 시간 성공적으로 등록 후 Toast 보여주기 (알람시간 표시)
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd:mm:ss", Locale.getDefault());
-        Toast.makeText(this, "Alarm: " + format.format(calendar.getTime()), Toast.LENGTH_LONG).show();
+            //알람 시간 성공적으로 등록 후 Toast 보여주기 (알람시간 표시)
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd:mm:ss", Locale.getDefault());
+            Toast.makeText(this, "Alarm: " + format.format(calendar.getTime()), Toast.LENGTH_LONG).show();
+        }
     }
 
     View.OnClickListener mClickListener = new View.OnClickListener() {

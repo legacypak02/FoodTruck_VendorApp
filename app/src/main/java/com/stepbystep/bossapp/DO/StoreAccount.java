@@ -11,6 +11,15 @@ public class StoreAccount implements Serializable {
     private String phoneNumber;
     private String truckId;
     private String vendor_status;
+    private String vendor_notice;
+
+    public String getVendor_notice() {
+        return vendor_notice;
+    }
+
+    public void setVendor_notice(String vendor_notice) {
+        this.vendor_notice = vendor_notice;
+    }
 
     public StoreAccount() {
 

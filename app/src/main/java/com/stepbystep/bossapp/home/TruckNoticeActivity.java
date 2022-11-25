@@ -8,15 +8,23 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.stepbystep.bossapp.AnimActivity;
+import com.stepbystep.bossapp.DO.StoreAccount;
 import com.stepbystep.bossapp.R;
 import com.stepbystep.bossapp.databinding.ActivityTruckNoticeBinding;
 import com.stepbystep.bossapp.MainActivity;
@@ -25,14 +33,19 @@ import lombok.SneakyThrows;
 
 public class TruckNoticeActivity extends AnimActivity {
     private ActivityTruckNoticeBinding binding;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference = database.getReference();
+    DatabaseReference databaseReference;
+    FirebaseUser user;
+    StoreAccount storeAccount;
+    String vendor_notice;
 
 
     String savedNoticeInstance;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        databaseReference = FirebaseDatabase.getInstance().getReference("BossApp").child("StoreAccount").child(user.getUid());
 
         binding = ActivityTruckNoticeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -87,6 +100,25 @@ public class TruckNoticeActivity extends AnimActivity {
     private void saveNotice(){
         try {
             binding.progressBarNotice.setVisibility(View.VISIBLE);
+            if(user != null){
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()) {
+                            storeAccount = snapshot.getValue(StoreAccount.class);
+                            databaseReference.child("vendor_notice").setValue(binding.etNotice);
+                            binding.progressBarNotice.setVisibility(View.GONE);
+                            Toast.makeText(TruckNoticeActivity.this, "공지사항을 저장했습니다.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(TruckNoticeActivity.this, "공지사항을 저장하는 과정에서 오류가 발생하였습니다.", Toast.LENGTH_LONG).show();
+
+                    }
+                });
+            }
         } catch (Exception e) {
             Toast.makeText(TruckNoticeActivity.this, "공지사항을 저장하는 과정에서 오류가 발생하였습니다.", Toast.LENGTH_LONG).show();
             Log.e("e = ", e.getMessage());
