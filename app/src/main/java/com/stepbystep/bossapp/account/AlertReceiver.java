@@ -25,7 +25,7 @@ import java.util.Locale;
 import com.stepbystep.bossapp.R;
 
 public class AlertReceiver extends BroadcastReceiver {
-    public static final String TYPE_ALARM = "Alarm";
+    public static final String TYPE_ALARM = "축제알람";
 
     public static final String EXTRA_MESSAGE = "Alarm_Message";
     public static final String EXTRA_TYPE = "Type";
@@ -78,14 +78,14 @@ public class AlertReceiver extends BroadcastReceiver {
             if (alarmManager != null) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }
-
+            //RTC_WAKEUP- 알람으로 지정된 시간에 핸드폰의 절전 모드를 해제하여 대기 중인 인텐트 실행
             Toast.makeText(context, "알람 등록 성공", Toast.LENGTH_SHORT).show();
         }else {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ID_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             if (alarmManager != null) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }
-
+            //RTC_WAKEUP- 알람으로 지정된 시간에 핸드폰의 절전 모드를 해제하여 대기 중인 인텐트 실행
             Toast.makeText(context, "알람 등록 성공", Toast.LENGTH_SHORT).show();
         }
     }
@@ -110,9 +110,9 @@ public class AlertReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.notify_icon)
                 .setContentTitle(title)
-                .setContentText(message)
+                .setContentText(message) //사용자가 입력한 메세지
                 .setColor(ContextCompat.getColor(context, android.R.color.transparent))
-                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setVibrate(new long[]{1000, 1000, 1000})
                 .setSound(alarmSound);
 
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
@@ -120,7 +120,7 @@ public class AlertReceiver extends BroadcastReceiver {
                 NotificationManager.IMPORTANCE_DEFAULT);
 
         channel.enableVibration(true);
-        channel.setVibrationPattern(new long[]{1000, 1000, 1000, 1000, 1000});
+        channel.setVibrationPattern(new long[]{1000, 1000, 1000});
 
         builder.setChannelId(CHANNEL_ID);
 

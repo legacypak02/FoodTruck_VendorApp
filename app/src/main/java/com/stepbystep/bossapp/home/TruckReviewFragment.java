@@ -88,7 +88,7 @@ public class TruckReviewFragment extends Fragment {
         return view;
     }
 
-    private void getRating() {
+    private void getRating() { //별점 받아와서 데이터 기반으로 progressbar와 평균 계산
 
         review_database.orderByChild("truckId").equalTo(truckId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -148,7 +148,7 @@ public class TruckReviewFragment extends Fragment {
         });
     }
 
-    private void getComment() {
+    private void getComment() { // Comment 및 유저이름 받아오기
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("FoodTruck").child("Review");
         myRef.orderByChild("truckId").equalTo(truckId).addValueEventListener(new ValueEventListener() {

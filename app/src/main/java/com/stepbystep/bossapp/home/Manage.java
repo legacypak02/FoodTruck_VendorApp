@@ -88,7 +88,7 @@ public class Manage extends Fragment {
                         truckId = storeAccount.getTruckId();
                         vendor_status = storeAccount.getVendor_status();
                         if(vendor_status.equals("0")){
-                            binding.toggleButton.setChecked(true);
+                            binding.toggleButton.setChecked(true); //토글버튼 활성화 시 위치 갱신 및 영업시작
                             binding.toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -108,7 +108,7 @@ public class Manage extends Fragment {
                         }
                         if(vendor_status.equals("1"))
                         {
-                            binding.toggleButton.setChecked(false);
+                            binding.toggleButton.setChecked(false); //토글버튼 비활성화 시 영업중지
                             binding.toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

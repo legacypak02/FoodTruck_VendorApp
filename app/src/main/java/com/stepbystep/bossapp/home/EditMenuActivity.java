@@ -79,23 +79,23 @@ public class EditMenuActivity extends AppCompatActivity {
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("FoodTruck").child("Food");
 
         StorageReference selectedImgRef = FirebaseStorage.getInstance().getReferenceFromUrl(SelectedImagePath);
-        final long ONE_MEGABYTE = 1024 * 1024 * 10;
+        final long ONE_MEGABYTE = 1024 * 1024 * 10; //다운로드할 최대 바이트 수
         selectedImgRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
+            @Override //이전에 선택한 사진이 들어있는 폴더에서 선택했던 사진 데이터 반환
             public void onSuccess(byte[] bytes) {
                 SelectedImageBytes = bytes;
             }
         });
 
         choose.setOnClickListener(new View.OnClickListener() {
-            @Override
+            @Override //새로운 사진 선택
             public void onClick(View view) {
                 openImage();
             }
         });
 
         edit.setOnClickListener(new View.OnClickListener() {
-            @Override
+            @Override //내용 모두 편집이후 업로드
             public void onClick(View v) {
                 if (mUploadTask != null && mUploadTask.isInProgress())
                     Toast.makeText(EditMenuActivity.this, "업로드 중 입니다.", Toast.LENGTH_SHORT).show();

@@ -90,7 +90,7 @@ public class MenuManageFragment extends Fragment {
             }
         });
 
-        menuAdapter.setOnItemClickListener(new MenuAdapter.onItemClickListener() {
+        menuAdapter.setOnItemClickListener(new MenuAdapter.onItemClickListener() { //클릭 시 메뉴편집 화면으로
             @Override
             public void onItemClick(int pos) {
                 Intent i = new Intent(getActivity() , EditMenuActivity.class);
@@ -106,7 +106,7 @@ public class MenuManageFragment extends Fragment {
             }
         });
 
-        menuAdapter.setOnLongClickListener(new MenuAdapter.onLongClickListener() {
+        menuAdapter.setOnLongClickListener(new MenuAdapter.onLongClickListener() { //길게 클릭 시 메뉴 삭제 절차
             @Override
             public void onItemLongClick(int pos) {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity()).setTitle("확인절차").setMessage("정말 삭제하시겠습니까?!").setPositiveButton("네", new DialogInterface.OnClickListener() {
@@ -129,7 +129,7 @@ public class MenuManageFragment extends Fragment {
             }
         });
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() { //버튼 클릭 시 메뉴 추가 화면으로
             @Override
             public void onClick(View view) {
                 //메뉴 등록 버튼
