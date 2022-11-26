@@ -7,9 +7,6 @@
     android:theme="@style/ThemeOverlay.BossApp.FullscreenContainer"
     tools:context=".home.FullPicActivity">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
     <ImageView
         android:id="@+id/fullscreen_img"
         android:layout_width="match_parent"
@@ -19,8 +16,6 @@
         android:src="@drawable/skewer"
         android:textStyle="bold" />
 
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
