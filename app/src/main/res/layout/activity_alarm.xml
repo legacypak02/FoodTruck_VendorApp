@@ -12,6 +12,7 @@
         android:text="알림 시간설정"
         android:paddingTop="15dp"
         android:paddingLeft="10dp"
+        android:gravity="center"
         android:fontFamily="@font/myfont"
         android:textColor="@color/black"
         android:textSize="20sp" />
@@ -87,7 +88,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/edt_once_message"
+        android:id="@+id/edt_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"

@@ -25,7 +25,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private Calendar calendar;
     public AlertReceiver alertReceiver;
 
-    EditText edtOnceMessage;
+    EditText edtMessage;
     TextView tvDate;
     TextView tvTime;
 
@@ -42,7 +42,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         this.calendar = Calendar.getInstance();
         displayDate();
 
-        edtOnceMessage = findViewById(R.id.edt_once_message);
+        edtMessage = findViewById(R.id.edt_message);
         tvDate = findViewById(R.id.txtDate);
         tvTime = findViewById(R.id.txtTime);
 
@@ -109,7 +109,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnAlarm:
                 String onceDate = tvDate.getText().toString();
                 String onceTime = tvTime.getText().toString();
-                String onceMessage = edtOnceMessage.getText().toString();
+                String onceMessage = edtMessage.getText().toString();
 
                 alertReceiver.setOnTimeAlarm(this, onceDate, onceTime, onceMessage);
                 break;
