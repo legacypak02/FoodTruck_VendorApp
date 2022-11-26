@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.stepbystep.bossapp.DO.Truck;
 import com.stepbystep.bossapp.R;
 import com.stepbystep.bossapp.DO.Review;
 import com.google.firebase.database.DataSnapshot;

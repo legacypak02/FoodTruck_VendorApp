@@ -1,8 +1,6 @@
 package com.stepbystep.bossapp.home;
 
 import android.os.Bundle;
-import android.widget.RatingBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -15,10 +13,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.stepbystep.bossapp.DO.StoreAccount;
-import com.stepbystep.bossapp.DO.Truck;
 import com.stepbystep.bossapp.R;
 
 public class ReviewManageActivity extends AppCompatActivity {

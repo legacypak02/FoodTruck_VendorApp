@@ -17,13 +17,6 @@
         android:textSize="20sp" />
 
 
-    <TimePicker
-        android:id = "@+id/timePicker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:timePickerMode="spinner"
-        android:background="#FEFDF4"/>
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -64,16 +57,67 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="시간"
+            />
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:textStyle="bold"
+            />
+
+        <Button
+            android:id="@+id/btnTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rectangle_background_stroke"
+            android:text="시간"
+            android:textSize="20dp"
+            android:fontFamily="@font/myfont"
+            />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edt_once_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="16dp"
+        android:hint="원하는 알람메시지를 입력하세요"
+        android:inputType="text" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
         android:gravity="center">
 
         <Button
             android:id="@+id/btnAlarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="알람 등록"
-            android:fontFamily="@font/myfont"
             android:background="@drawable/round_rectangle_background_stroke"
-            />
+            android:fontFamily="@font/myfont"
+            android:text="알람 등록" />
+        <Button
+            android:id="@+id/btnAlarmCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rectangle_background_stroke"
+            android:fontFamily="@font/myfont"
+            android:layout_marginLeft="20dp"
+            android:text="알람 취소" />
 
     </LinearLayout>
 

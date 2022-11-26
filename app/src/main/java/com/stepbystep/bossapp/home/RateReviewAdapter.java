@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.stepbystep.bossapp.R;
 import com.stepbystep.bossapp.DO.Review;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 

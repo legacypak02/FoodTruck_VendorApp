@@ -2,22 +2,17 @@ package com.stepbystep.bossapp.home;
 
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,19 +22,14 @@ import com.stepbystep.bossapp.AnimActivity;
 import com.stepbystep.bossapp.DO.StoreAccount;
 import com.stepbystep.bossapp.R;
 import com.stepbystep.bossapp.databinding.ActivityTruckNoticeBinding;
-import com.stepbystep.bossapp.MainActivity;
 
-import lombok.SneakyThrows;
 
 public class TruckNoticeActivity extends AnimActivity {
     private ActivityTruckNoticeBinding binding;
     DatabaseReference databaseReference;
     FirebaseUser user;
     StoreAccount storeAccount;
-    String vendor_notice;
 
-
-    String savedNoticeInstance;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
