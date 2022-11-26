@@ -115,7 +115,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.btnAlarmCancel:
-                alertReceiver.cancelAlarm(this, AlertReceiver.TYPE_ALARM);
+                alertReceiver.cancelAlarm(this);
                 break;
         }
     }

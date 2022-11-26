@@ -25,10 +25,10 @@ import java.util.Locale;
 import com.stepbystep.bossapp.R;
 
 public class AlertReceiver extends BroadcastReceiver {
-    public static final String TYPE_ALARM = "알람";
+    public static final String TYPE_ALARM = "Alarm";
 
-    public static final String EXTRA_MESSAGE = "알림메세지";
-    public static final String EXTRA_TYPE = "타입";
+    public static final String EXTRA_MESSAGE = "Alarm_Message";
+    public static final String EXTRA_TYPE = "Type";
 
     private final int ID_ALARM = 100;
 
@@ -61,15 +61,15 @@ public class AlertReceiver extends BroadcastReceiver {
         Intent intent = new Intent(context, AlertReceiver.class);
         intent.putExtra(EXTRA_MESSAGE, message);
 
-        String dateArray[] = date.split("-");
-        String timeArray[] = time.split(":");
+        String DateArr[] = date.split("-");
+        String TimeArr[] = time.split(":");
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, Integer.parseInt(dateArray[0]));
-        calendar.set(Calendar.MONTH, Integer.parseInt(dateArray[1]) - 1);
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateArray[2]));
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]));
-        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArray[1]));
+        calendar.set(Calendar.YEAR, Integer.parseInt(DateArr[0]));
+        calendar.set(Calendar.MONTH, Integer.parseInt(DateArr[1]) - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(DateArr[2]));
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(TimeArr[0]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(TimeArr[1]));
         calendar.set(Calendar.SECOND, 0);
 
 
@@ -102,8 +102,8 @@ public class AlertReceiver extends BroadcastReceiver {
     }
 
     private void showAlarmNotification(Context context, String title, String message, int notifId) {
-        String CHANNEL_ID = "Channel_1";
-        String CHANNEL_NAME = "AlarmManager channel";
+        String CHANNEL_ID = "Channel_ID";
+        String CHANNEL_NAME = "Channel_Name";
 
         NotificationManager notificationManagerCompat = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -135,7 +135,7 @@ public class AlertReceiver extends BroadcastReceiver {
         }
     }
 
-    public void cancelAlarm(Context context, String type) {
+    public void cancelAlarm(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(context, AlertReceiver.class);
