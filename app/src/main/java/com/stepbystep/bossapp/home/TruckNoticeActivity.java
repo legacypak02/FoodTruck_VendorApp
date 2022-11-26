@@ -90,13 +90,14 @@ public class TruckNoticeActivity extends AnimActivity {
     private void saveNotice(){
         try {
             binding.progressBarNotice.setVisibility(View.VISIBLE);
+            String NoticeTexts = binding.etNotice.getText().toString();
             if(user != null){
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if(snapshot.exists()) {
                             storeAccount = snapshot.getValue(StoreAccount.class);
-                            databaseReference.child("vendor_notice").setValue(binding.etNotice);
+                            databaseReference.child("vendor_notice").push().setValue(NoticeTexts);
                             binding.progressBarNotice.setVisibility(View.GONE);
                             Toast.makeText(TruckNoticeActivity.this, "공지사항을 저장했습니다.", Toast.LENGTH_LONG).show();
                         }
@@ -104,13 +105,13 @@ public class TruckNoticeActivity extends AnimActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(TruckNoticeActivity.this, "공지사항을 저장하는 과정에서 오류가 발생하였습니다.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(TruckNoticeActivity.this, "공지사항을 저장하지 못했습니다.", Toast.LENGTH_LONG).show();
 
                     }
                 });
             }
         } catch (Exception e) {
-            Toast.makeText(TruckNoticeActivity.this, "공지사항을 저장하는 과정에서 오류가 발생하였습니다.", Toast.LENGTH_LONG).show();
+            Toast.makeText(TruckNoticeActivity.this, "공지사항을 저장하지 못했습니다.", Toast.LENGTH_LONG).show();
             Log.e("e = ", e.getMessage());
             binding.progressBarNotice.setVisibility(View.GONE);
         }
