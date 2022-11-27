@@ -129,7 +129,7 @@ public class TruckReviewFragment extends Fragment {
                     ratingBar.setRating(5);
                 }
                 else {
-                    ave = (float) (Math.round(ave*10)/10.0);
+                    ave = (float) (Math.ceil(ave*10)/10.0);
                     ratingNum.setText(String.valueOf(ave));
                     ratingBar.setRating(ave);
                 }
