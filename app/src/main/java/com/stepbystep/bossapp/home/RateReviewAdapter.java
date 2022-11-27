@@ -55,8 +55,7 @@ public class RateReviewAdapter extends RecyclerView.Adapter<RateReviewAdapter.Co
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(context, FullPicActivity.class);
-                        intent.putExtra("img",ratesList.get(position).getImage());
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("url",ratesList.get(position).getImage());
                         context.startActivity(intent);
                     }
                 });
