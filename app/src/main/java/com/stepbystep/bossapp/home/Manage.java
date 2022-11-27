@@ -93,6 +93,7 @@ public class Manage extends Fragment {
                                 @Override
                                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                     databaseReference.child("vendor_status").setValue("1");
+                                    locationRef.child(truckId).child("vendor_status").setValue("1");
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                                             ContextCompat.checkSelfPermission(getActivity(),android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
@@ -113,6 +114,7 @@ public class Manage extends Fragment {
                                 @Override
                                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                     databaseReference.child("vendor_status").setValue("0");
+                                    locationRef.child(truckId).child("vendor_status").setValue("0");
                                     if (Build.VERSION.SDK_INT >=23 && ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                                             ContextCompat.checkSelfPermission(getActivity(),android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
