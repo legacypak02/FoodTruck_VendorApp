@@ -114,10 +114,10 @@ public class MenuManageFragment extends Fragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         DatabaseReference reference = databaseReference.child(foods.get(pos).getfKey());
                         reference.removeValue();
-                        StorageReference z = FirebaseStorage.getInstance().getReference("Menu").child(foods.get(pos).getName() + ".jpg");
-                        z.delete();
-                        StorageReference x = FirebaseStorage.getInstance().getReference("Menu").child(foods.get(pos).getName());
-                        x.delete();
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference("Menu").child(foods.get(pos).getName() + ".jpg");
+                        storageReference.delete();
+                        StorageReference storageReference1 = FirebaseStorage.getInstance().getReference("Menu").child(foods.get(pos).getName());
+                        storageReference1.delete();
                     }
                 }).setNegativeButton("아니요", new DialogInterface.OnClickListener() {
                     @Override

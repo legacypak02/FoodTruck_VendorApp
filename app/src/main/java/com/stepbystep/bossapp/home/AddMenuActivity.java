@@ -245,10 +245,10 @@ public class AddMenuActivity extends AppCompatActivity {
                                 truckId = storeAccount.getTruckId();
                                 foodRef = FirebaseDatabase.getInstance().getReference("FoodTruck").child("Food").child(truckId);
                                 String foodKey = foodRef.push().getKey();
-                                DatabaseReference z = FirebaseDatabase.getInstance().getReference("FoodTruck")
+                                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("FoodTruck")
                                         .child("Food")
                                         .child(truckId);
-                                z.child(foodKey).setValue(food).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                myRef.child(foodKey).setValue(food).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(AddMenuActivity.this, "메뉴 등록 성공", Toast.LENGTH_SHORT).show();
