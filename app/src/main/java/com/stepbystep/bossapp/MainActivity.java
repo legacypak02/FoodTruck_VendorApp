@@ -3,18 +3,31 @@ package com.stepbystep.bossapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.stepbystep.bossapp.DO.StoreAccount;
 import com.stepbystep.bossapp.account.Account;
 import com.stepbystep.bossapp.chart.Chart;
+import com.stepbystep.bossapp.foottraffic.FootTraffic;
 import com.stepbystep.bossapp.home.Manage;
 import com.stepbystep.bossapp.login.LoginActivity;
 import com.stepbystep.bossapp.order.Order;
@@ -26,8 +39,11 @@ public class MainActivity extends AppCompatActivity {
     Manage manage;
     Order order;
     Chart chart;
+    FootTraffic footTraffic;
     FragmentManager fragmentManager;
     BottomNavigationView bottomNavigationView;
+    private DatabaseReference myUserDatabase;
+    private FirebaseUser user;
 
     //뒤로가기 로직을 위한 변수
     private final long FINISH_INTERVAL_TIME = 2000;
@@ -50,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         chart = new Chart();
         order = new Order();
         account = new Account();
+        footTraffic = new FootTraffic();
         //main fragment 선택(홈, map fragment)
         fragmentManager = getSupportFragmentManager();
         //하단 탭 리스너 설정 메서드 호출
@@ -65,7 +82,33 @@ public class MainActivity extends AppCompatActivity {
             bottomNavigationView.setSelectedItemId(R.id.order_tab);
         }
         else if(flag == 3){
+            bottomNavigationView.setSelectedItemId(R.id.traffic_tab);
+        }
+        else if(flag == 4){
             bottomNavigationView.setSelectedItemId(R.id.account_tab);
+        }
+        //자신의 userAccount 데이터를 외부데이터베이스에서 자기 데이터베이스로 가져온다.
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            myUserDatabase = FirebaseDatabase.getInstance().getReference("BossApp").child("StoreAccount").child(user.getUid());
+            myUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+                        StoreAccount storeAccount = snapshot.getValue(StoreAccount.class);
+                        SharedPreferences storeAccountData = getSharedPreferences(user.getUid(),MODE_PRIVATE);
+                        SharedPreferences.Editor editor = storeAccountData.edit();
+                        Gson gson = new GsonBuilder().create();
+                        editor.putString("StoreAccount",gson.toJson(storeAccount));
+                        editor.commit();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
     }
 
@@ -112,6 +155,15 @@ public class MainActivity extends AppCompatActivity {
                         return false;
                     }
                     fragmentManager.beginTransaction().replace(R.id.container,order).commit();
+                    return true;
+                }
+                else if(id == R.id.traffic_tab){
+                    if(auth.getCurrentUser() == null){
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
+                        return false;
+                    }
+                    fragmentManager.beginTransaction().replace(R.id.container,footTraffic).commit();
                     return true;
                 }
 
